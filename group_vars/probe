@@ -14,13 +14,13 @@ probe_deployment_repository: "https://github.com/quarkslab/irma-probe.git"
 probe_configs:
   - section: broker_probe
     option: host
-    value: brain.irma
+    value: 172.16.1.30
   - section: backend_probe
     option: host
-    value: brain.irma
+    value: 172.16.1.30
   - section: ftp_brain
     option: host
-    value: brain.irma
+    value: 172.16.1.30
 
 
 ## Supervisor Role
