@@ -1,6 +1,8 @@
 IRMA Ansible Provisioning
 =========================
 
+This is a special Readme for the HiTB conference.
+
 
 What You’ll need?
 -----------------
@@ -23,27 +25,7 @@ For *test or development* purposes (optional):
 Getting Started
 ---------------
 
-### 1. Prep servers
-
-Create an account for Ansible provisioning, or use one which has already been
-created. For speed up provisioning, you can:
-
-- Authorize you SSH key for password less authentication (optional):
-
-  ```
-  *On your local machine*
-  $ ssh-copy-id user@hostname # -i if you want to select your identity file
-  ```
-
-- If you don’t want to have to type your password for sudo command execution,
-  add your user to sudoers, using `visudo` command (optional):
-
-  ```
-  user ALL=(ALL) NOPASSWD: ALL
-  ```
-
-
-### 2. Clone IRMA repository
+### 1. Clone the repository
 
 Using [Git](http://git-scm.com/) software, clone the repository:
 ```
@@ -51,164 +33,48 @@ $ git clone --recursive
 ```
 
 
-### 3. Configure you installation
+### 2. Install Ansible dependencies
 
-Modify settings in `group_vars/*` especially the `default_ssh_keys:` section,
-you’ll need to add private keys from user for passwordless connection to the
-default irma server user. *Be carreful, you’ll need to change all passwords from
-this configuration files (`changeme` variables).*
-
-You’ll need to custom the `hosts` file and adapt it with you own server
-infrastructure. There is three sections, one for each server role (frontend,
-brain, probe). If you want to have all your
-
-
-### 4. Install Ansible dependencies
-
-Dependencies are availabe via [Ansible Galaxy](https://galaxy.ansible.com/)
+Dependencies are available via [Ansible Galaxy](https://galaxy.ansible.com/)
 repository. Installation has been made easy using:
 
 ```
-$ ansible-galaxy install -r galaxy.yml -p ./roles # --force if you’ve already
-                                                  # install it
+$ ansible-galaxy install -r galaxy.yml -p ./roles # --force if you’ve already installed it
 ```
 
 
-### 5. Run the Ansible Playbook
+### 3. Install Ansible dependencies
 
-To run the whole thing:
-```
-$ ansible-playbook -i ./hosts playbook.yml -u <your_sudo_username> -K
-```
-Ansible will ask you the sudo password (`-K` option),
-
-To run one or more specific actions you can use tags. For example, if you want
-to re-provision NGinx, run the same command, but add `--tags=nginx`. You can
-combine multiple tags.
-
-
-### 6. Modify .ini files
-
-You’ll need to connect on each server you’ve just used, and modify manually .ini
-files.
-
-In next release of this playbook, there’ll be more convenient way to automate
-configuration generation.
-
-
-### 7. Deploy new version of IRMA
-
-As your servers have been provision and deploy in step 5, when you want to upgrade
-it, you’ll need to run the deployment script:
-```
-$ ansible-playbook -i ./hosts deployment.yml -u irma
-```
-
-/!\ Replace `irma` with the default user if you’ve change it in the
-`group_vars/all` file.
-
-
-### 8. Access to your IRMA installation
-
-Access to your installation using the hostname you’ve used as frontend hostname.
-
-
-Test or develop IRMA using Vagrant
-----------------------------------
-
-### 1. Create the right environment
-
-If you’re interested in using [Vagrant](http://vagrantup.com), be sure to have
-the following directory layout:
+Let’s go:
 
 ```
-… # all in the same directory
- |
- +--- irma-frontend
- +--- irma-probe
- +--- irma-brain
-[…]
- +--- irma-ansible-provisioning
+$ vagrant up
 ```
 
-Note: This directory layout can be modified, see `share_*` from
-`environments/dev.yml` file.
-
-
-### 2. Run Vagrant and create your VMs
-
-To initialize and provision the Virtualbox VM, run in the
-irma-ansible-provisioning directory `vagrant up --no-provision`. VM will be
-downloaded, and configured using `environments/dev.yml` file (default behavior).
-
-(optional) If you want to use your own environment, create it in `environments`
-directory and run:
-```
-$ VM_ENV=your_environment_name vagrant up --no-provision
-```
-
-### 3. Configure your .ini files
-
-/!\ You can bypass this step, as this provisioning is sync with default username
-and password used in (frontend|brain|probe) config files.
-
-As your `config/*.ini` file are transferring from host to VMs, you’ll need
-locally to modify it (frontend, probe, brain) to match `group_vars/*` user and
-password.
-
-In next release of this playbook, there’ll be more convenient way to automate
-configuration generation.
-
-
-### 4. Provision your VMs
-
-Due to Ansible limit using parallel execution, you’ll need to launch the
-provision Vagrant command only for one VM:
-```
-$ vagrant provision frontend
-```
-
-The provisioning and deployment will apply to all of your VMs.
-
-
-### 5. Modify your host and open IRMA frontend
+Vagrant will launch a VM and install IRMA on it. It can take a while
+(from 5 to 10 min) depending on the amount of RAM you have on your computer
+and the hard disk drive I/O speed.
 
 Then, for proper use, update your `/etc/hosts` file and add:
+
 ```
-172.16.1.30    www.frontend.irma.local
+172.16.1.30    www.frontend.irma
 ```
 
-Then, with your web browser, IRMA allinone is available at
-[www.frontend.irma.local](http://www.frontend.irma.local).
+### 4. Enjoy!
+
+IRMA allinone is available at [www.frontend.irma](http://www.frontend.irma).
 
 
-Enable SSL using OpenSSL
-------------------------
+### 5. Develop your Probe
 
-If you want to activate SSL on the frontend server, you’ll need:
-
-- modify frontend_openssl variables in `group_vars/frontend`:
-
-  ```
-  frontend_openssl: True # Default is false
-  frontend_openssl_dh_param: # put the DH file locations
-  frontend_openssl_certificates: [] # an array of files {source, destination}
-                                    # to copy to the server
-  ```
-
-- Uncomment (and customize) the `nginx_sites` variable in the
-  `group_vars/frontend`, a commented example is available.
-
-Then, provision or reprovision your infrastructure. Ansible will only change
-file related to OpenSSL and Nginx configurations.
+TODO
 
 
 Speed up your Vagrant VMs
 -------------------------
 
 Install this softwares:
-- [vagrant-cachier](https://github.com/fgrehm/vagrant-cachier): `vagrant plugin
-  install vagrant-cachier`
 - [vagrant-vbguest](https://github.com/dotless-de/vagrant-vbguest): `vagrant plugin
   install vagrant-vbguest`
 
@@ -235,7 +101,6 @@ Some of roles from [Ansible Galaxy](https://galaxy.ansible.com/) used here:
 - NodeJS role from [JasonGiedymin/nodejs](https://github.com/AnsibleShipyard/ansible-nodejs)
 - Nginx role from [jdauphant/ansible-role-nginx](https://github.com/jdauphant/ansible-role-nginx)
 - OpenSSH role from [Ansibles/openssh](https://github.com/Ansibles/openssh)
-- Redis role from [DavidWittman/ansible-redis](https://github.com/DavidWittman/ansible-redis)
 - Sudo role from [weareinteractive/ansible-sudo](https://github.com/weareinteractive/ansible-sudo)
 - Users role from [mivok/ansible-users](https://github.com/mivok/ansible-users)
 - uWSGI role from [gdamjan/ansible-uwsgi](https://github.com/gdamjan/ansible-uwsgi)
