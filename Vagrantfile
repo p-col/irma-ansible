@@ -1,21 +1,10 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-env = ENV.has_key?('VM_ENV') ? ENV['VM_ENV'] : "hitb"
-
-require 'yaml'
-configuration = YAML.load_file(File.dirname(__FILE__) + "/environments/#{env}.yml")
-servers = configuration['servers']
-ansible_config = configuration['ansible_config'] || false
-
 # set minimal Vagrant version
 Vagrant.require_version ">= 1.5.0"
 
 Vagrant.configure("2") do |config|
-  config.vm.provider "virtualbox" do |v, override|
-    config.vm.box = "puphpet/debian75-x64"
-  end
-
   config.ssh.forward_agent = true
 
   if Vagrant.has_plugin?("vagrant-cachier")
@@ -23,36 +12,41 @@ Vagrant.configure("2") do |config|
     config.cache.auto_detect = false
   end
 
-  servers.each do |server|
-    config.vm.define server['name'] do |machine|
-      machine.vm.hostname = server['hostname']
+  config.vm.define "allinone" do |allinone|
+    allinone.vm.box = "allinone"
+    allinone.vm.box_url = "../package.box"
+    allinone.vm.hostname = "brain.irma"
+    allinone.vm.network "private_network", ip: "172.16.1.30"
 
-      if server['ip']
-        print server['ip'], "\n"
-        machine.vm.network "private_network", ip: server['ip']
-      end
-
-      if server.has_key?('shares')
-        server['shares'].each do |share|
-          machine.vm.synced_folder share["share_from"], share["share_to"], type: "rsync", owner: share['share_user'], group: share['share_group'], rsync__exclude: share["share_exclude"]
-        end
-      end
-
-      machine.vm.provider "virtualbox" do |v|
-        #v.gui = true
-        v.customize ["modifyvm", :id, "--cpus", server['cpus'] || 1]
-        v.customize ["modifyvm", :id, "--cpuexecutioncap", server['cpuexecutioncap'] || 50]
-        v.customize ["modifyvm", :id, "--memory", server['memory'] || 1024]
-      end
+    allinone.vm.provider "virtualbox" do |v|
+      #v.gui = true
+      v.customize ["modifyvm", :id, "--cpus", 2]
+      v.customize ["modifyvm", :id, "--cpuexecutioncap", 100]
+      v.customize ["modifyvm", :id, "--memory", 2048]
     end
   end
 
-  if ansible_config
-    config.vm.provision :ansible do |ansible|
+  config.vm.define "myprobe" do |myprobe|
+    myprobe.vm.box = "puphpet/debian75-x64"
+    myprobe.vm.hostname = "myprobe.irma"
+    myprobe.vm.network "private_network", ip: "172.16.1.42"
+
+    myprobe.vm.provider "virtualbox" do |v|
+      #v.gui = true
+      v.customize ["modifyvm", :id, "--cpus", 1]
+      v.customize ["modifyvm", :id, "--cpuexecutioncap", 50]
+      v.customize ["modifyvm", :id, "--memory", 1024]
+    end
+
+    myprobe.vm.provision :ansible do |ansible|
       ansible.playbook = 'playbook.yml'
-      ansible.extra_vars = ansible_config['extra_vars']
-      ansible.groups = ansible_config['groups']
-      ansible.limit = 'all'
+      ansible.extra_vars = {
+        vagrant: true,
+        vagrant_share: false
+      }
+      ansible.groups = {
+        "probe" => ["myprobe"]
+      }
 
       #ansible.tags = ['']
       #ansible.skip_tags = ['']
