@@ -13,8 +13,8 @@ Vagrant.configure("2") do |config|
   end
 
   config.vm.define "allinone" do |allinone|
-    allinone.vm.box = "allinone"
-    allinone.vm.box_url = "http://irma.quarkslab.com/download/1.1.0/irma-1.1.0.box"
+    allinone.vm.box = "irma-1.1.0-2"
+    allinone.vm.box_url = "http://irma.quarkslab.com/download/1.1.0/irma-1.1.0-2.box"
     allinone.vm.hostname = "brain.irma"
     allinone.vm.network "private_network", ip: "172.16.1.30"
 
