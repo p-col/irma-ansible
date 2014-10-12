@@ -55,11 +55,20 @@ Vagrant will launch a VM and install IRMA on it. It can take a while
 (from 5 to 10 min) depending on the amount of RAM you have on your computer
 and the hard disk drive I/O speed.
 
-Then, for proper use, update your `/etc/hosts` file and add:
+Open your navigator at [172.16.1.30](http://172.16.1.30).
+
+You can skip these step but, for proper use, you can update your `/etc/hosts`
+file and add:
 
 ```
 172.16.1.30    www.frontend.irma
 ```
+
+If you need to access this VM, simply enter:
+```
+$ vagrant ssh allinone
+```
+
 
 ### 4. Enjoy!
 
@@ -68,7 +77,18 @@ IRMA allinone is available at [www.frontend.irma](http://www.frontend.irma).
 
 ### 5. Develop your Probe
 
-TODO
+There is an empty probe available at 172.16.1.42. It’s configure to be
+connected to the allione VM.
+
+You can access it by typing:
+```
+$ vagrant ssh myprobe
+$ sudo su irma
+$ cd /opt/irma/irma-probe/current
+```
+
+Then you can start create your own probe using the skeleton in
+`modules/custom/skeleton`.
 
 
 Speed up your Vagrant VMs
