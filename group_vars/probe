@@ -22,11 +22,13 @@ probe_configs:
     option: host
     value: 172.16.1.30
 
+probe_random_hostname: "{{ lookup('pipe', 'date +%S%N') }}"
+
 
 ## Supervisor Role
 supervisor_programs_probe:
   - name: probe_app
-    command: "{{ probe_venv_dir }}/bin/celery worker -A probe.tasks --loglevel=INFO --without-gossip --without-mingle --without-heartbeat"
+    command: "{{ probe_venv_dir }}/bin/celery worker -A probe.tasks --hostname={{probe_random_hostname}} --loglevel=INFO --without-gossip --without-mingle --without-heartbeat"
     directory: "{{ probe_install_dir }}"
     user: nobody
     numprocs: 1
