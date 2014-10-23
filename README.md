@@ -1,24 +1,16 @@
 IRMA Ansible Provisioning
 =========================
 
-This is a special Readme for the HiTB conference.
+This is a special Readme for the [hack.lu 2014](http://2014.hack.lu/).
 
 
 What You’ll need?
 -----------------
 
 - [Ansible](http://www.ansible.com) 1.6 or higher
-- One or multiple 64-bit [Debian](https://www.debian.org) 7 servers. They should
-  have been configured as mentionned in the Prerequisites section
-
-For *test or development* purposes (optional):
-
 - [Vagrant](http://www.vagrantup.com/) 1.5 or higher has to be installed
 - As the installation work only for [Virtualbox](https://www.virtualbox.org/),
   you’ll need to install it
-- [Vagrant VBGuest](https://github.com/dotless-de/vagrant-vbguest) to speed up
-  your VM
-- [Rsync](https://rsync.samba.org/) for directories copy between host and VMs
 - Read the [Ansible introduction](http://docs.ansible.com/intro.html)
 
 
