@@ -1,15 +1,15 @@
 ---
 
 - name: Common tasks to execute on all Linux servers
-  hosts: all
+  hosts: all:!windows
   sudo: yes
   roles:
-    - { role: quarkslab.apt, tags: 'apt', when: "ansible_distribution in ['Debian', 'Ubuntu']" }
-    - { role: franklinkim.ufw, tags: 'ufw', when: "ansible_distribution in ['Debian', 'Ubuntu']" }
-    - { role: quarkslab.irma_provisioning_common, tags: 'common', when: "ansible_distribution in ['Debian', 'Ubuntu']" }
-    - { role: mivok0.users, tags: 'users', when: "ansible_distribution in ['Debian', 'Ubuntu']" }
-    - { role: franklinkim.sudo, tags: 'sudo', when: "ansible_distribution in ['Debian', 'Ubuntu']" }
-    - { role: ANXS.openssh, tags: 'openssh', when: "ansible_distribution in ['Debian', 'Ubuntu']" }
+    - { role: quarkslab.apt, tags: 'apt' }
+    - { role: franklinkim.ufw, tags: 'ufw' }
+    - { role: quarkslab.irma_provisioning_common, tags: 'common' }
+    - { role: mivok0.users, tags: 'users' }
+    - { role: franklinkim.sudo, tags: 'sudo' }
+    - { role: ANXS.openssh, tags: 'openssh' }
 
 
 - name: Frontend provisioning
@@ -44,7 +44,6 @@
     - { role: quarkslab.irma_provisioning_probe, tags: 'probe' }
     - { role: quarkslab.supervisor, tags: 'supervisor', supervisor_programs: "{{ supervisor_programs_probe }}", when: "ansible_distribution in ['Debian', 'Ubuntu']"}
 
-
 # Antivirus section
 - name: ClamAV provisioning
   hosts: clamav
@@ -72,7 +71,7 @@
 
 - name: McAfee VSCL provisioning (Windows)
   hosts: mcafee-win
-  sudo: yes
+  sudo: no
   roles:
     - { role: quarkslab.mcafee_vscl_windows, tags: 'mcafee_vscl_windows' }
 
