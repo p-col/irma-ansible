@@ -1,10 +1,9 @@
 ---
 
 - include: windows_install_packages.yml
-  sudo: no
-
 - include: windows_configuration.yml
-  sudo: no
+
+
 
 - name: Create IRMA application directories
   win_file:
@@ -12,6 +11,5 @@
     state: directory
   with_items:
     - "{{ irma_install_dir }}"
-  sudo: no
 
 # vim: sw=2
